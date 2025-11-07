@@ -1,0 +1,27 @@
+{
+  "name": "flac3d-language-support",
+  "displayName": "FLAC3D Language Support",
+  "description": "FLAC3D 7.0 命令流与 FISH 语言补全提示插件",
+  "version": "1.0.1",
+  "publisher": "liu-shihao",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": ["Programming Languages", "Snippets"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "flac3d",
+        "aliases": ["FLAC3D", "flac3d"],
+        "extensions": [".dat"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "flac3d",
+        "path": "./snippets/flac3d.code-snippets"
+      }
+    ]
+  }
+}

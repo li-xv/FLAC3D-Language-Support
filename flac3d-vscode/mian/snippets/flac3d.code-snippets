@@ -1,0 +1,297 @@
+{
+  // ========== 模型控制命令 ==========
+  "model new": {
+    "prefix": "model new",
+    "body": ["model new"],
+    "description": "新建模型，清空当前内存中的数据。"
+  },
+  "model solve": {
+    "prefix": "model solve",
+    "body": ["model solve"],
+    "description": "启动求解器，迭代计算直至收敛。"
+  },
+  "model step": {
+    "prefix": "model step",
+    "body": ["model step ${1:1000}"],
+    "description": "执行指定步数的迭代计算。"
+  },
+  "model gravity": {
+    "prefix": "model gravity",
+    "body": ["model gravity ${1:9.81}"],
+    "description": "定义重力加速度方向与大小。"
+  },
+
+  // ========== 网格生成 ==========
+  "zone create": {
+    "prefix": "zone create",
+    "body": ["zone create ${1:cylinder|brick} size ${2:20 20 20}"],
+    "description": "创建指定形状的网格，如圆柱体或立方体。"
+  },
+  "zone property": {
+    "prefix": "zone property",
+    "body": ["zone property density=${1:2000} bulk=${2:1e8} shear=${3:5e7}"],
+    "description": "为网格赋予材料属性参数。"
+  },
+  "zone model assign": {
+    "prefix": "zone model assign",
+    "body": ["zone model assign ${1:elastic|mohr-coulomb|hoek-brown}"],
+    "description": "指定本构模型类型。"
+  },
+  "zone face apply": {
+    "prefix": "zone face apply",
+    "body": ["zone face apply stress-normal ${1:-1e5} range position-x ${2:0}"],
+    "description": "在指定面施加法向应力或位移边界。"
+  },
+  "zone initialize": {
+    "prefix": "zone initialize",
+    "body": ["zone initialize stress ${1:-1e5} ${2:-1e5} ${3:-1e5}"],
+    "description": "初始化应力或速度场。"
+  },
+
+  // ========== 结构单元 ==========
+  "structure beam": {
+    "prefix": "structure beam",
+    "body": ["structure beam create by-line range position-x ${1:0}"],
+    "description": "创建梁单元，用于支撑或连接。"
+  },
+  "structure cable": {
+    "prefix": "structure cable",
+    "body": ["structure cable create by-line range position-y ${1:10}"],
+    "description": "创建锚索单元。"
+  },
+
+  // ========== 输出与监测 ==========
+  "history create": {
+    "prefix": "history create",
+    "body": ["history create name='${1:disp_z}' zone ${2:1} displacement-z"],
+    "description": "创建位移、应力或其他变量的历史记录。"
+  },
+  "program plot": {
+    "prefix": "program plot",
+    "body": ["program plot create contour stress-xx"],
+    "description": "生成应力云图或其他可视化输出。"
+  },
+  "data export": {
+    "prefix": "data export",
+    "body": ["data export vtk filename='${1:output}.vtk'"],
+    "description": "导出VTK文件以用于Paraview可视化。"
+  },
+
+  // ========== FISH 函数 ==========
+  "fish define": {
+    "prefix": "fish define",
+    "body": [
+      "fish define ${1:function_name}",
+      "    ${2:; your code here}",
+      "end"
+    ],
+    "description": "定义一个FISH函数，用于自定义逻辑与计算。"
+  },
+  "fish call": {
+    "prefix": "fish call",
+    "body": ["fish call ${1:function_name}"],
+    "description": "调用定义的FISH函数。"
+  },
+  "fish set": {
+    "prefix": "fish set",
+    "body": ["fish set ${1:var} = ${2:value}"],
+    "description": "设置FISH变量的值。"
+  },
+  "fish history": {
+    "prefix": "fish history",
+    "body": ["fish history ${1:var} name='${2:output_name}'"],
+    "description": "创建FISH变量的历史记录。"
+  },
+  "io.out": {
+    "prefix": "io.out",
+    "body": ["io.out('${1:message}')"],
+    "description": "在命令行输出自定义信息。"
+  },
+  "if loop": {
+    "prefix": "if",
+    "body": [
+      "if ${1:condition} then",
+      "    ${2:; statements}",
+      "endif"
+    ],
+    "description": "FISH条件判断语句。"
+  },
+  "loop": {
+    "prefix": "loop",
+    "body": [
+      "loop local ${1:i} (${2:start}, ${3:end})",
+      "    ${4:; statements}",
+      "endloop"
+    ],
+    "description": "FISH循环语句。"
+  },
+  // ===========================
+  // ⚙️ Base Commands (核心命令)
+  // ===========================
+
+  "data": {
+    "prefix": "data",
+    "body": ["data ${1:import|export} ${2:filename}"],
+    "description": "数据导入导出命令。用于读入或保存模型文件。"
+  },
+  "dfn": {
+    "prefix": "dfn",
+    "body": ["dfn ${1:generate|import|export}"],
+    "description": "离散裂隙网络 (DFN) 命令，用于定义、生成或导入裂隙集合。"
+  },
+  "fish": {
+    "prefix": "fish",
+    "body": ["fish define ${1:function_name}", "    ${2:; code}", "end"],
+    "description": "FISH 语言定义块，用于创建自定义函数或逻辑。"
+  },
+  "fragment": {
+    "prefix": "fragment",
+    "body": ["fragment generate from geometry ${1:name}"],
+    "description": "碎块单元生成命令，用于复杂几何体的网格划分。"
+  },
+  "geometry": {
+    "prefix": "geometry",
+    "body": ["geometry import 'file.geom'"],
+    "description": "导入或定义几何体，作为生成网格的基础。"
+  },
+  "group": {
+    "prefix": "group",
+    "body": ["group 'GroupName' range position-x ${1:0} ${2:10}"],
+    "description": "对单元或节点进行分组管理，便于后续操作。"
+  },
+  "history": {
+    "prefix": "history",
+    "body": ["history create name='${1:stress_z}' zone ${2:id} stress-zz"],
+    "description": "创建历史记录，用于输出随步数变化的数据。"
+  },
+  "program": {
+    "prefix": "program",
+    "body": ["program call '${1:script.dat}'"],
+    "description": "执行外部命令流文件或系统命令。"
+  },
+  "project": {
+    "prefix": "project",
+    "body": ["project save 'model.f3prj'"],
+    "description": "保存或加载工程项目文件。"
+  },
+  "range": {
+    "prefix": "range",
+    "body": ["range position-x ${1:0} ${2:10}"],
+    "description": "范围选择短语，用于限定命令作用范围。"
+  },
+  "structure": {
+    "prefix": "structure",
+    "body": ["structure beam create by-line range position-x ${1:0}"],
+    "description": "结构单元命令（梁、壳、锚索等）。"
+  },
+  "table": {
+    "prefix": "table",
+    "body": ["table 'stress_curve' import 'file.tbl'"],
+    "description": "创建或导入表格数据，可用于材料曲线或边界输入。"
+  },
+  "trace": {
+    "prefix": "trace",
+    "body": ["trace on"],
+    "description": "打开命令执行跟踪，用于调试脚本。"
+  },
+  "zone": {
+    "prefix": "zone",
+    "body": ["zone create brick size ${1:20 20 20}"],
+    "description": "FLAC3D 主体命令：定义、生成、赋值与计算网格单元。"
+  },
+  "model": {
+    "prefix": "model",
+    "body": ["model new", "model large-strain on"],
+    "description": "定义模型全局参数，如尺寸、重力、材料控制等。"
+  },
+  "plot": {
+    "prefix": "plot",
+    "body": ["plot create contour stress-xx"],
+    "description": "生成图形输出，可视化应力、位移等场变量。"
+  },
+  "building-blocks": {
+    "prefix": "building-blocks",
+    "body": ["building-blocks create ${1:block_name}"],
+    "description": "用于定义几何构建块 (Building Blocks)，可用于快速生成复杂结构。"
+  },
+  "extrude": {
+    "prefix": "extrude",
+    "body": ["extrude from-geometry 'geom_name' by ${1:10}"],
+    "description": "从二维几何体拉伸生成三维网格体。"
+  },
+
+  // ===========================
+  // 🧠 FISH Function Groups
+  // ===========================
+
+  "dfn.process utilities": {
+    "prefix": "fish.dfn",
+    "body": ["fish define dfn_process()", "    ${1:; process fractures}", "end"],
+    "description": "处理离散裂隙网络的函数集合。"
+  },
+  "domain": {
+    "prefix": "fish.domain",
+    "body": ["fish define domain_init()", "    ${1:; set domain properties}", "end"],
+    "description": "域管理相关函数，用于模型整体范围或网格域的操作。"
+  },
+  "file": {
+    "prefix": "fish.file",
+    "body": ["file.open('${1:filename}')", "file.write('${2:data}')", "file.close()"],
+    "description": "文件操作函数集合。"
+  },
+  "geometry utilities": {
+    "prefix": "fish.geometry",
+    "body": ["fish define geo_calc()", "    ${1:; geometry computations}", "end"],
+    "description": "几何函数集合：计算点、向量、体积等。"
+  },
+  "global": {
+    "prefix": "fish.global",
+    "body": ["global.set('${1:var}', ${2:value})"],
+    "description": "定义或修改全局变量。"
+  },
+  "group": {
+    "prefix": "fish.group",
+    "body": ["group.find('${1:name}')"],
+    "description": "返回组中元素或修改组属性。"
+  },
+  "io": {
+    "prefix": "fish.io",
+    "body": ["io.out('${1:message}')"],
+    "description": "控制台输出函数。"
+  },
+  "math": {
+    "prefix": "fish.math",
+    "body": ["math.sqrt(${1:value})"],
+    "description": "数学运算函数，如 sin, cos, sqrt, abs 等。"
+  },
+  "process utilities": {
+    "prefix": "fish.process",
+    "body": ["fish define process()", "    ${1:; user logic here}", "end"],
+    "description": "进程与控制流函数集合。"
+  },
+  "structure": {
+    "prefix": "fish.structure",
+    "body": ["structure.node.force(${1:id})"],
+    "description": "结构单元接口函数，如梁、锚索、板等单元数据访问。"
+  },
+  "table": {
+    "prefix": "fish.table",
+    "body": ["table.create('${1:name}')"],
+    "description": "FISH 表格函数：用于创建、修改、读取表格数据。"
+  },
+  "zone": {
+    "prefix": "fish.zone",
+    "body": ["zone.stress(${1:zone_id})"],
+    "description": "访问和修改单元信息（应力、应变、速度等）。"
+  },
+  "time": {
+    "prefix": "fish.time",
+    "body": ["model.time"],
+    "description": "获取当前模型时间或步数。"
+  },
+  "user data functions": {
+    "prefix": "fish.user",
+    "body": ["fish define user_func()", "    ${1:; custom user code}", "end"],
+    "description": "自定义函数接口，用于模型监控、自动化与计算控制。"
+  }
+}
